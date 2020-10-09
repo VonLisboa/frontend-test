@@ -1,0 +1,17 @@
+{
+  "name": "dps-senior-frontend-test",
+  "scripts": {
+    "dev": "nuxt",
+    "build": "nuxt build",
+    "generate": "nuxt generate",
+    "start": "nuxt start"
+  },
+  "dependencies": {
+    "nuxt": "^2.14.6",
+    "nuxt-vuex-localstorage": "^1.2.7",
+    "tailwindcss": "^1.8.10"
+  },
+  "devDependencies": {
+    "@nuxtjs/tailwindcss": "^3.1.0"
+  }
+}
