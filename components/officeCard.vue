@@ -53,7 +53,7 @@
           <hr class="border-black-500"/>
           <div class="text-sm text-center uppercase pt-2 pb-4">
             <div 
-              @click="edit" 
+              @click="setEdit" 
               class="inline-flex float-left"
             >
               <div class="inline-flex text-gray-500 cursor-pointer">
@@ -121,7 +121,7 @@
                 {{edition == true ? 'Edit' : 'New' }} location
               </div>
               <div 
-                @click="closeDecision"
+                @click="closeDecision(true)"
                 class="ml-auto pt-1 cursor-pointer"
               >
                 <svg class="w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -137,12 +137,23 @@
                 </div>
                 <div class="mb-4">
                   <label class="block text-sm mb-1">Title *</label>
-                  <input v-model="title" type="text" required class="outline-none appearance-none rounded w-full py-2 px-3 leading-tight border-2 border-black focus:border-teal-500">
-                  <p class="text-red-500 text-xs hidden">This field cannot be empty.</p>
+                  <t-input
+                    v-model="title"
+                    type="text"
+                    v-on:error="setError"
+                    :required="true" 
+                    class="w-full"
+                  />
                 </div>
                 <div class="mb-4">
                   <label class="block text-sm mb-1">Enter the address *</label>
-                  <input v-model="address" type="text" required class="outline-none appearance-none rounded w-full py-2 px-3 leading-tight border-2 border-black focus:border-teal-500">
+                  <t-input
+                    v-model="address"
+                    type="text"
+                    v-on:error="setError"
+                    :required="true" 
+                    class="w-full"
+                  />
                 </div>
                 <div class="mb-4">
                   <label class="block uppercase text-sm text-teal-500 mb-1">contact information</label>
@@ -150,22 +161,51 @@
                 </div>
                 <div class="mb-4">
                   <label class="block text-sm mb-1">Full name *</label>
-                  <input v-model="name" type="text" required class="outline-none appearance-none rounded w-full py-2 px-3 leading-tight border-2 border-black focus:border-teal-500">
+                  <t-input
+                    v-model="name"
+                    type="text"
+                    v-on:error="setError"
+                    :required="true" 
+                    class="w-full"
+                  />
                 </div>
                 <div class="mb-4">
                   <label class="block text-sm mb-1">Job Position *</label>
-                  <input v-model="job" type="text" required class="outline-none appearance-none rounded w-full py-2 px-3 leading-tight border-2 border-black focus:border-teal-500">
+                  <t-input
+                    v-model="job"
+                    type="text"
+                    v-on:error="setError"
+                    :required="true" 
+                    class="w-full"
+                  />
                 </div>
                 <div class="mb-4">
                   <label class="block text-sm mb-1">Email address *</label>
-                  <input v-model="email" type="email" required placeholder="name@example.com" class="outline-none appearance-none rounded w-full py-2 px-3 leading-tight border-2 border-black focus:border-teal-500">
+                  <t-input
+                    v-model="email"
+                    type="email"
+                    v-on:error="setError"
+                    :required="true" 
+                    class="w-full"
+                  />
                 </div>
                 <div class="mb-4">
                   <label class="block text-sm mb-1">Phone *</label>
-                  <input v-model="phone" type="tel" required placeholder="(xxx) xxx-xxxx" class="outline-none appearance-none rounded w-full py-2 px-3 leading-tight border-2 border-black focus:border-teal-500">
+                  <t-input
+                    v-model="phone"
+                    type="phone"
+                    v-on:error="setError"
+                    :required="true" 
+                    v-mask="'(###) ###-####'"
+                    class="w-full"
+                  />
                 </div>
                 <div class="mb-4">
-                  <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                  <button 
+                    :disabled="error > 0"
+                    :class="error > 0 ? 'cursor-not-allowed bg-gray-400': 'bg-blue-500 hover:bg-blue-700'"
+                    class="text-white py-2 px-4 rounded"
+                  >
                     Save
                   </button>
                 </div>
@@ -178,9 +218,13 @@
 </template>
 
 <script>
+  import {mask} from 'vue-the-mask'
   import SelectColor from "./selectColor"
+  import TInput from "./tInput"
   export default {
+    directives: {mask},
     components: {
+      TInput,
       SelectColor
     },
     props: [
@@ -197,16 +241,13 @@
         name: '', 
         job: '', 
         email: '', 
-        phone: ''
+        phone: '',
+        error: 0
       }
     },
     mounted: function () {
       this.$nextTick(function () {
-        if (this.content) {
-          Object.keys(this.content).forEach(k => {
-            this[k] = this.content[k]
-          })
-        }
+        this.get()
       })
     },
     computed: {
@@ -221,16 +262,21 @@
       }
     },
     methods: {
-      closeDecision () {
-        this.edition === true ? this.edition=false : this.open=false
+      setError (error) {
+        error ? this.error++ : this.error--
       },
-      edit () {
+      setEdit () {
         this.edition = true
       },
-      remove () {
-        this.$store.commit('remove', this.index)
+      get () {
+        if (this.content) {
+          Object.keys(this.content).forEach(k => {
+            this[k] = this.content[k]
+          })
+        }
       },
       submit () {
+        if (this.error > 0) return
         if (this.edition) {
           this.$store.commit('edit', {
             'index': this.index,
@@ -254,7 +300,30 @@
           })
         }
         this.closeDecision()
+      },
+      remove () {
+        this.$store.commit('remove', this.index)
+      },
+      clear () {
+        this.index = '',
+        this.color = 0,
+        this.title = '', 
+        this.address = '', 
+        this.name = '', 
+        this.job = '', 
+        this.email = '', 
+        this.phone = '',
+        this.error = 0
+      },
+      closeDecision (reset=false) {
+        if (this.edition === true) {
+          this.edition = false 
+          reset ? this.get() : null;
+        } else {
+            this.open = false
+            this.clear()
+        }
       }
-    },
+    }
   }
 </script>
