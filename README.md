@@ -1,4 +1,4 @@
-# damasvue
+# senior-frontend-test
 
 ## Project setup
 ```
