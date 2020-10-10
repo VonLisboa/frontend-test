@@ -1,84 +1,95 @@
 <template>
   <div class="container mt-2">
-    <div v-if="!addition && !edition">
-      <div 
-        @click.prevent="open=!open" 
-        :class="colorClass"
-        class="relative overflow-y-hidden rounded-lg w-full p-6 z-20 cursor-pointer shadow-lg"
-      >
-        <div class="text-white float-right pt-4">
-          <svg 
-            :class="open ? 'rotate-180': 'rotate-0'" 
-            class="w-5 transition transform duration-500 ease-in-out" 
-            fill="none" 
-            viewBox="0 0 24 24" 
-            stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-          </svg>
-        </div>
-        <div class="text-white text-xl font-bold pb-1">
-          {{title}}
-        </div>
-        <div class="text-white text-sm font-normal">
-          {{address}}
-        </div>
-      </div>
-      <transition
-        enter-active-class="transition-all duration-300 ease-linear"
-        leave-active-class="transition-all duration-300 ease-linear"
-        enter-class="h-0 -mt-12 opacity-50"
-        enter-to-class="h-48 -mt-3 opacity-100"
-        leave-class="h-48 -mt-3 opacity-100"
-        leave-to-class="h-0 -mt-12 opacity-50"
-      >
+    <transition
+      enter-active-class="transition-all duration-300 ease-linear"
+      leave-active-class="transition-all duration-300 ease-linear"
+      enter-class="opacity-0 h-0"
+      enter-to-class="opacity-100 h-64"
+      leave-class="opacity-100 h-64"
+      leave-to-class="opacity-0 h-0"
+    >
+      <div v-if="!addition && !edition">
+        <slot></slot>
         <div 
-          v-if="open" 
-          class="relative overflow-y-hidden rounded-lg w-full p-6 bg-white z-10 shadow-lg"
+          @click.prevent="open=!open" 
+          :class="colorClass"
+          class="relative overflow-y-hidden rounded-lg w-full p-6 z-20 cursor-pointer shadow-lg"
         >
-          <slot></slot>
-          <div class="text-lg font-semibold pt-2">
-            {{name}}
+          <div class="text-white float-right pt-4">
+            <svg 
+              :class="open ? 'rotate-180': 'rotate-0'" 
+              class="w-5 transition transform duration-500 ease-in-out" 
+              fill="none" 
+              viewBox="0 0 24 24" 
+              stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
           </div>
-          <div class="text-sm pt-2">
-            {{job}}
+          <div class="text-white text-xl font-bold pb-1">
+            {{title}}
           </div>
-          <div
-            class="text-sm pt-2"
-            :class="'text-red-500'">
-              {{email}}
-          </div>
-          <div class="text-sm pt-2 pb-2">
-            {{phone}}
-          </div>
-          <hr class="border-black-500"/>
-          <div class="text-sm text-center uppercase pt-2 pb-4">
-            <div 
-              @click="setEdit" 
-              class="inline-flex float-left"
-            >
-              <div class="inline-flex text-gray-500 cursor-pointer">
-                <svg class="w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                </svg>
-                <span class="pl-3">Edit</span>
-              </div>
-            </div>
-            <div 
-              @click="remove" 
-              class="inline-flex float-right"
-            >
-              <div class="inline-flex text-red-500 cursor-pointer">
-                <svg class="w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
-                <span class="pl-3">Delete</span>
-              </div>
-            </div>
+          <div class="text-white text-sm font-normal">
+            {{address}}
           </div>
         </div>
-      </transition>
-    </div>
-    <div v-else>
+        <transition
+          enter-active-class="transition-all duration-300 ease-linear"
+          leave-active-class="transition-all duration-300 ease-linear"
+          enter-class="h-0 -mt-12 opacity-50"
+          enter-to-class="h-48 -mt-3 opacity-100"
+          leave-class="h-48 -mt-3 opacity-100"
+          leave-to-class="h-0 -mt-12 opacity-50"
+        >
+          <div 
+            v-if="open" 
+            class="relative overflow-y-hidden rounded-lg w-full p-6 bg-white z-10 shadow-lg"
+          >
+            <slot></slot>
+            <div class="text-lg font-semibold pt-2">
+              {{name}}
+            </div>
+            <div class="text-sm pt-2">
+              {{job}}
+            </div>
+            <div
+              class="text-sm pt-2"
+              :class="'text-red-500'">
+                {{email}}
+            </div>
+            <div class="text-sm pt-2 pb-2">
+            {{ phone | VMask('(###) ###-####') }}
+            </div>
+            <hr class="border-black-500"/>
+            <div class="text-sm text-center uppercase pt-2 pb-4">
+              <div 
+                @click="setEdit" 
+                class="inline-flex float-left"
+              >
+                <div class="inline-flex text-gray-500 cursor-pointer">
+                  <svg class="w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                  </svg>
+                  <span class="pl-3">Edit</span>
+                </div>
+              </div>
+              <div 
+                @click="remove" 
+                class="inline-flex float-right"
+              >
+                <div class="inline-flex text-red-500 cursor-pointer">
+                  <svg class="w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                  <span class="pl-3">Delete</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </transition>
+      </div>
+    </transition>
+
+    <div>
       <transition
         enter-active-class="transition-all duration-300 ease-linear"
         leave-active-class="transition-all duration-300 ease-linear"
@@ -88,8 +99,8 @@
         leave-to-class="opacity-0"
       >
         <div 
-          v-if="!open" 
-          @click.prevent="open=!open" 
+          v-if="!open && addition" 
+          @click.prevent="setAdd" 
           class="flex flex-row rounded-lg w-full p-6 pt-2 pb-2 bg-red-500 cursor-pointer z-10 shadow-lg"
         >
           <slot></slot>
@@ -112,7 +123,7 @@
         leave-to-class="h-0 mt-10 opacity-0"
       >
         <div
-          v-if="open" 
+          v-if="edition || additionInternal" 
           class="rounded-lg w-full p-6 pt-2 pb-2 bg-white z-20 shadow-lg overflow-y-hidden"
         >
             <slot></slot>
@@ -218,11 +229,12 @@
 </template>
 
 <script>
-  import {mask} from 'vue-the-mask'
+  import { VueMaskDirective, VueMaskFilter } from 'v-mask'
   import SelectColor from "./selectColor"
   import TInput from "./tInput"
   export default {
-    directives: {mask},
+    directives: {'mask': VueMaskDirective},
+    filters: {'VMask': VueMaskFilter},
     components: {
       TInput,
       SelectColor
@@ -234,6 +246,7 @@
       return {
         open: false,
         edition: false,
+        additionInternal: false,
         index: '',
         color: 0,
         title: '', 
@@ -264,6 +277,10 @@
     methods: {
       setError (error) {
         error ? this.error++ : this.error--
+      },
+      setAdd () {
+        this.open = !this.open
+        this.additionInternal = true
       },
       setEdit () {
         this.edition = true
@@ -316,11 +333,12 @@
         this.error = 0
       },
       closeDecision (reset=false) {
+        this.open = false
+        this.additionInternal = false
         if (this.edition === true) {
           this.edition = false 
           reset ? this.get() : null;
         } else {
-            this.open = false
             this.clear()
         }
       }

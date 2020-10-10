@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="bg-white overflow-y-hidden">
         <div 
             @click="open=!open" 
             :class="colorClass"

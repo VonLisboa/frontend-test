@@ -62,7 +62,11 @@
       }
     },
     mounted: function () {
-      this.$emit('error', true)
+      if(this.value.length==0) {
+        this.$emit('error', true)
+      } else {
+        this.first = false
+      }
     }
   }
 </script>
