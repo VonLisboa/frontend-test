@@ -1,4 +1,4 @@
-# senior-frontend-test
+# frontend-test
 
 ## Project setup
 ```
